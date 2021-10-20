@@ -43,11 +43,10 @@ class GoogleMixin(object):
         args = dict((k, v[-1]) for k, v in handler.request.arguments.items()
                     )  # type: Dict[str, Union[str, bytes]]
         args["openid.mode"] = u"check_authentication"
-        url = ''
+        url = 'http://cap.qa.sz.shopee.io:8805/api/getUserInfo'
         if http_client is None:
             http_client = self.get_auth_http_client()
-        resp = await http_client.fetch(
-            url, method="GET", body=urllib.parse.urlencode(args))
+        resp = await http_client.fetch(url)
         logging.warning(resp)
         return 'arrow'
 
