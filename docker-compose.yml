@@ -11,6 +11,8 @@ services:
     depends_on:
     - rethinkdb
     # restart: on-failure
+    command:
+      [ "python", "main.py", "--auth", "github" ]
   rethinkdb:
     image: rethinkdb:2.3.6
     volumes:
