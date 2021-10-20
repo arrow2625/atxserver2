@@ -82,18 +82,15 @@ class GoogleLoginHandler(BaseRequestHandler, GoogleMixin):
     _OPENID_ENDPOINT = AUTH_BACKENDS['openid']['endpoint']
 
     async def get(self):
-        if self.get_argument("openid.mode", False):
-            try:
-                user = await self.get_authenticated_user()
-            except AuthError as e:
-                self.write(
-                    "<code>Auth error: {}</code> <a href='/login'>Login</a>".
-                        format(e))
-            else:
-                logger.info("User info: %s", user)
-                await self.set_current_user(user['email'], user['name'])
-                # next_url = self.get_argument('next', '/')
-                next_url = 'www.baidu.com'
-                self.redirect(next_url)
+        try:
+            user = await self.get_authenticated_user()
+        except AuthError as e:
+            self.write(
+                "<code>Auth error: {}</code> <a href='/login'>Login</a>".
+                    format(e))
         else:
-            self.authenticate_redirect()
+            logger.info("User info: %s", user)
+            await self.set_current_user(user['email'], user['name'])
+            # next_url = self.get_argument('next', '/')
+            next_url = 'www.baidu.com'
+            self.redirect(next_url)
