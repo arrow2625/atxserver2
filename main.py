@@ -13,7 +13,7 @@ from tornado.log import enable_pretty_logging
 
 from web.database import db
 from web.entry import make_app
-from web.views import OpenIdLoginHandler, SimpleLoginHandler, GithubLoginHandler
+from web.views import OpenIdLoginHandler, SimpleLoginHandler, GithubLoginHandler, GoogleLoginHandler
 
 
 def machine_ip():
@@ -30,7 +30,8 @@ def main():
     _auth_handlers = {
         "simple": SimpleLoginHandler,
         "openid": OpenIdLoginHandler,
-        "github": GithubLoginHandler
+        "github": GithubLoginHandler,
+        "google": GoogleLoginHandler
     }
 
     parser = argparse.ArgumentParser(

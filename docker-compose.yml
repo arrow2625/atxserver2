@@ -12,7 +12,7 @@ services:
     - rethinkdb
     # restart: on-failure
     command:
-      [ "python", "main.py", "--auth", "openid" ]
+      [ "python", "main.py", "--auth", "google" ]
   rethinkdb:
     image: rethinkdb:2.3.6
     volumes:

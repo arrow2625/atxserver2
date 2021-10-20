@@ -4,7 +4,7 @@
 from logzero import logger
 from tornado.auth import OAuth2Mixin
 
-from .auth import AuthError, OpenIdMixin, GithubOAuth2Mixin
+from .auth import AuthError, OpenIdMixin, GithubOAuth2Mixin, GoogleMixin
 from .base import BaseRequestHandler
 
 from ..settings import AUTH_BACKENDS, GITHUB
@@ -20,7 +20,7 @@ class OpenIdLoginHandler(BaseRequestHandler, OpenIdMixin):
             except AuthError as e:
                 self.write(
                     "<code>Auth error: {}</code> <a href='/login'>Login</a>".
-                    format(e))
+                        format(e))
             else:
                 logger.info("User info: %s", user)
                 await self.set_current_user(user['email'], user['name'])
@@ -76,3 +76,24 @@ class GithubLoginHandler(BaseRequestHandler, GithubOAuth2Mixin):
                 scope=['user'],
                 response_type='code',
                 extra_params={'approval_prompt': 'auto'})
+
+
+class GoogleLoginHandler(BaseRequestHandler, GoogleMixin):
+    _OPENID_ENDPOINT = AUTH_BACKENDS['openid']['endpoint']
+
+    async def get(self):
+        if self.get_argument("openid.mode", False):
+            try:
+                user = await self.get_authenticated_user()
+            except AuthError as e:
+                self.write(
+                    "<code>Auth error: {}</code> <a href='/login'>Login</a>".
+                        format(e))
+            else:
+                logger.info("User info: %s", user)
+                await self.set_current_user(user['email'], user['name'])
+                # next_url = self.get_argument('next', '/')
+                next_url = 'www.baidu.com'
+                self.redirect(next_url)
+        else:
+            self.authenticate_redirect()
