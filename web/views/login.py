@@ -79,18 +79,20 @@ class GithubLoginHandler(BaseRequestHandler, GithubOAuth2Mixin):
 
 
 class GoogleLoginHandler(BaseRequestHandler, GoogleMixin):
-    _OPENID_ENDPOINT = AUTH_BACKENDS['openid']['endpoint']
-
     async def get(self):
-        try:
-            user = await self.get_authenticated_user()
-        except AuthError as e:
-            self.write(
-                "<code>Auth error: {}</code> <a href='/login'>Login</a>".
-                    format(e))
+        sso_c = self.get_cookie("SSO_C", '')
+        sso_a = self.get_cookie("SSO_A", '')
+        if sso_a or sso_c:
+            try:
+                user = self.get_authenticated_user(sso_c, sso_a)
+            except AuthError as e:
+                self.write(
+                    "<code>Auth error: {}</code> <a href='/login'>Login</a>".
+                        format(e))
+            else:
+                logger.info("User info: %s", user)
+                await self.set_current_user(user['email'], user['name'])
+                next_url = 'http://10.12.189.70:4000/devices'
+                self.redirect(next_url)
         else:
-            logger.info("User info: %s", user)
-            await self.set_current_user(user['email'], user['name'])
-            # next_url = self.get_argument('next', '/')
-            next_url = 'www.baidu.com'
-            self.redirect(next_url)
+            self.authenticate_redirect()
