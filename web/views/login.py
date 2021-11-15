@@ -92,7 +92,7 @@ class GoogleLoginHandler(BaseRequestHandler, GoogleMixin):
             else:
                 logger.info("User info: %s", user)
                 await self.set_current_user(user['email'], user['name'])
-                next_url = 'http://10.12.189.70:4000/devices'
+                next_url = 'http://devices.qa.sz.shopee.io:4000/devices'
                 self.redirect(next_url)
         else:
             self.authenticate_redirect()
