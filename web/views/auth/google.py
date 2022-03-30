@@ -14,7 +14,7 @@ import requests
 class GoogleMixin(object):
     def authenticate_redirect(self):
         url = 'http://cap.qa.sz.shopee.io:8805/api/getUserInfo'
-        resp = requests.get(url, headers={"referer": "http://devices.qa.sz.shopee.io:4000"})
+        resp = requests.get(url, headers={"referer": "http://localhost:4000"})
         if resp.status_code == 403:
             next_url = resp.json().get('login_url')
             self.set_cookie_sso_a(next_url)
